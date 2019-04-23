@@ -25,13 +25,16 @@
 #include "ui_aboutdialog.h"
 #include <QIcon>
 
+#include "appversion.h"
+#include "resources.h"
+
 AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
-    this->setWindowIcon(QIcon(":/images/resources/pink-sakura-01-hi.png"));
-    ui->versionlabel->setText("Version: 1.0.0 (Compiled "+ QString(__DATE__) + QString(__TIME__)+")");
+    this->setWindowIcon(QIcon(Resources::SakuraIconURL));
+    ui->versionlabel->setText("Version: " + AppVersion::VersionString + " (Compiled "+ AppVersion::CompileDateTime + ")");
 }
 
 AboutDialog::~AboutDialog()

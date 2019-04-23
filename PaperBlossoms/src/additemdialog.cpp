@@ -23,7 +23,9 @@
 
 #include "additemdialog.h"
 #include "ui_additemdialog.h"
+#include "dictionary.h"
 #include "enums.h"
+#include "resources.h"
 #include <QDebug>
 
 AddItemDialog::AddItemDialog(DataAccessLayer* dal, Character* character, QString type, QWidget *parent) :
@@ -31,17 +33,17 @@ AddItemDialog::AddItemDialog(DataAccessLayer* dal, Character* character, QString
     ui(new Ui::AddItemDialog)
 {
     ui->setupUi(this);
-    this->setWindowIcon(QIcon(":/images/resources/pink-sakura-01-hi.png"));
+    this->setWindowIcon(QIcon(Resources::SakuraIconURL));
     this->dal = dal;
     this->character = character;
     this->type = type;
 
-    if(type == "Weapon"){
+    if(type == Dictionary::Items::Weapon){
         ui->weap_1_groupBox->setVisible(true);
         ui->weap_2_groupBox->setVisible(true);
         ui->armor_groupBox->setVisible(false);
     }
-    else if (type == "Armor"){
+    else if (type == Dictionary::Items::Armor){
         ui->weap_1_groupBox->setVisible(false);
         ui->weap_2_groupBox->setVisible(false);
         ui->armor_groupBox->setVisible(true);
@@ -83,7 +85,7 @@ void AddItemDialog::on_itemtemplate_combobox_currentIndexChanged(const QString &
     qualities.setStringList(dal->qsl_getitemqualities(arg1,type));
     //ui->qual_comboBox->addItems(dal->qsl_getqualities());
 
-    if(type == "Weapon"){
+    if(type == Dictionary::Items::Weapon){
         const QList<QStringList> weapondata = dal->ql_getweapondata(arg1);
         bool didFirst = false;
         bool didSecond = false;
@@ -114,12 +116,12 @@ void AddItemDialog::on_itemtemplate_combobox_currentIndexChanged(const QString &
             }
         }
     }
-    else if (type == "Armor"){
+    else if (type == Dictionary::Items::Armor){
         const QList<QStringList> armordata = dal->ql_getarmordata(arg1);
         foreach (const QStringList resistdata, armordata) {
-            if(resistdata.at(ArmorData::RESIST_CATEGORY) == "Physical")
+            if(resistdata.at(ArmorData::RESIST_CATEGORY) == Dictionary::Resistances::Physical)
                 ui->armor_phys_spinBox->setValue(resistdata.at(ArmorData::RESIST_VALUE).toInt());
-            else if (resistdata.at(ArmorData::RESIST_CATEGORY) == "Supernatural")
+            else if (resistdata.at(ArmorData::RESIST_CATEGORY) == Dictionary::Resistances::Supernatural)
                 ui->armor_supernatural_spinBox->setValue(resistdata.at(ArmorData::RESIST_VALUE).toInt());
             else{
                 qWarning() << "ERROR: " + resistdata.at(ArmorData::RESIST_CATEGORY) + " is not Physical or Supernatural. Skipping.";

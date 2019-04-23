@@ -23,13 +23,14 @@
 
 #include "addtitledialog.h"
 #include "ui_addtitledialog.h"
+#include "resources.h"
 
 AddTitleDialog::AddTitleDialog(DataAccessLayer* dal, Character* character, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddTitleDialog)
 {
     ui->setupUi(this);
-    this->setWindowIcon(QIcon(":/images/resources/pink-sakura-01-hi.png"));
+    this->setWindowIcon(QIcon(Resources::SakuraIconURL));
     this->dal = dal;
     this->character = character;
     ui->title_combobox->addItems(dal->qsl_gettitles());

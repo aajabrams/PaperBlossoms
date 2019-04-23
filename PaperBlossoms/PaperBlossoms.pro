@@ -70,7 +70,10 @@ HEADERS += \
     src/newcharwizardpage7.h \
     src/pboutputdata.h \
     src/renderdialog.h \
-    src/ringviewer.h
+    src/ringviewer.h \
+    src/dictionary.h \
+    src/appversion.h \
+    src/resources.h
 
 FORMS += \
     ui/aboutdialog.ui \

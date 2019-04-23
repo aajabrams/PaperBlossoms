@@ -24,6 +24,7 @@
 #include "newcharwizardpage3.h"
 #include "ui_newcharwizardpage3.h"
 #include "dataaccesslayer.h"
+#include "dictionary.h"
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QDebug>
@@ -36,7 +37,7 @@ NewCharWizardPage3::NewCharWizardPage3(DataAccessLayer *dal, QWidget *parent) :
 {
     ui->setupUi(this);
     this->dal = dal;
-    this->setTitle("Part 3: Honor and Glory");
+    this->setTitle("Part 3: " + Dictionary::Common::Honor + " and " + Dictionary::Common::Glory);
 
     //Add radio buttons to buttongroup to set exclusivity properly
     q7group.addButton(ui->nc3_q7_pos_radioButton);
@@ -98,7 +99,14 @@ void NewCharWizardPage3::initializePage()
     skills.append(dal->qsl_getfamilyskills(family));
     qDebug()<<skills;
     QStringList skillList = dal->qsl_getskills();
-    const QStringList q8skills = {"Commerce", "Labor", "Medicine", "Seafaring", "Skulduggery", "Survival"};
+    const QStringList q8skills = {
+        Dictionary::Question8Skills::Commerce,
+        Dictionary::Question8Skills::Labor,
+        Dictionary::Question8Skills::Medicine,
+        Dictionary::Question8Skills::Seafaring,
+        Dictionary::Question8Skills::Skulduggery,
+        Dictionary::Question8Skills::Survival
+    };
     ui->nc3_q7_comboBox->clear();
     ui->nc3_q8_comboBox->clear();
     foreach (QString string, skills) {
@@ -157,7 +165,8 @@ void NewCharWizardPage3::regenSummary(){
        }
    }
 
-    ui->summary_label->setText("Rings:\n"+rings+"\n\nSkills:\n"+skills);
+   // TODO: helper
+    ui->summary_label->setText(Dictionary::Common::Rings + ":\n"+rings+"\n\n" + Dictionary::Common::Skills + ":\n"+skills);
 
 }
 
@@ -215,17 +224,18 @@ QMap<QString, int> NewCharWizardPage3::calcSkills(){
         heritage = field("ancestor2").toString();
     }
 
+    // TODO: helper
     if(    //core
-           heritage == "Wondrous Work" ||
-           heritage ==  "Dynasty Builder" ||
-           heritage ==  "Discovery" ||
-           heritage ==  "Ruthless Victor" ||
-           heritage ==  "Elevated for Service" ||
+           heritage == Dictionary::Heritages::Wondrous_Work ||
+           heritage == Dictionary::Heritages::Dynasty_Builder ||
+           heritage == Dictionary::Heritages::Discovery ||
+           heritage == Dictionary::Heritages::Ruthless_Victor ||
+           heritage == Dictionary::Heritages::Elevated_for_Service ||
            //shadowlands
-           heritage ==   "Infamous Builder" ||
-           heritage ==   "Lost in the Darkness" ||
-           heritage ==   "Vengeance for the Fallen" ||
-           heritage ==   "Tewnty Goblin Thief"
+           heritage == Dictionary::Heritages::Infamous_Builder ||
+           heritage == Dictionary::Heritages::Lost_in_the_Darkness ||
+           heritage == Dictionary::Heritages::Vengeance_for_the_Fallen ||
+           heritage == Dictionary::Heritages::Tewnty_Goblin_Thief
             ){
         skills.append(field("q18OtherEffects").toString());
 

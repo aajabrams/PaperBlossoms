@@ -33,13 +33,14 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QWebEngineSettings>
+#include "resources.h"
 
 RenderDialog::RenderDialog(PBOutputData* charData, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::RenderDialog)
 {
     ui->setupUi(this);
-    this->setWindowIcon(QIcon(":/images/resources/pink-sakura-01-hi.png"));
+    this->setWindowIcon(QIcon(Resources::SakuraIconURL));
     this->m_character = charData;
     tempFile = new QTemporaryFile;
     //qDebug()<<QDir::tempPath();

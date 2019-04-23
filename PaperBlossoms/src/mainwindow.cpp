@@ -50,6 +50,7 @@
 #include <QCoreApplication>
 #include <QApplication>
 #include <QFontDatabase>
+#include "resources.h"
 
 
 
@@ -89,8 +90,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setStyleSheet("QMainWindow {background-image:url(:/images/resources/sakura_PNG37.png); background-position: center;background-repeat:no-repeat }" );
-    this->setWindowIcon(QIcon(":/images/resources/pink-sakura-01-hi.png"));
+    this->setStyleSheet("QMainWindow {background-image:url(" + Resources::SakuraBackgroundURL + "); background-position: center;background-repeat:no-repeat }" );
+    this->setWindowIcon(QIcon(Resources::SakuraIconURL));
     //int id = QFontDatabase::addApplicationFont(":/images/resources/Bradley Hand Bold.ttf");
     //int id = QFontDatabase::addApplicationFont("C:/Users/flux/git/paperblossom/resources/Bradley Hand Bold.ttf");
     //int id = QFontDatabase::addApplicationFontFromData(fileContents(":/images/resources/Bradley Hand Bold.ttf"));

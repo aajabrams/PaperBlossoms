@@ -25,6 +25,7 @@
 #include "ui_newcharwizardpage2.h"
 #include <QDebug>
 #include <QMessageBox>
+#include "dictionary.h"
 
 NewCharWizardPage2::NewCharWizardPage2(DataAccessLayer* dal, QWidget *parent) :
     QWizardPage(parent),
@@ -32,14 +33,14 @@ NewCharWizardPage2::NewCharWizardPage2(DataAccessLayer* dal, QWidget *parent) :
 {
     ui->setupUi(this);
     this->dal = dal;
-    this->setTitle("Part 2: Role and School");
+    this->setTitle("Part 2: " + Dictionary::Common::Role + " and " + Dictionary::Common::School);
     ui->nc2_HIDDEN_skillLineEdit->setVisible(false); //holds a skill string
 
     //Handle special cases
     ui->nc2_kitsune_label->setVisible(false);
     ui->nc2_kitsune_comboBox->setVisible(false);
     QStringList kitsuneschoollist = dal->qsl_getschools(field("currentClan").toString(), true);
-    kitsuneschoollist.removeAll("Kitsune Impersonator Tradition");
+    kitsuneschoollist.removeAll(Dictionary::Schools::KitsuneImpersonatorTradition);
     ui->nc2_kitsune_comboBox->addItems(kitsuneschoollist);
     ui->nc2_kitsune_comboBox->setCurrentIndex(-1);
 
@@ -88,10 +89,10 @@ NewCharWizardPage2::~NewCharWizardPage2()
 void NewCharWizardPage2::equipSelectionChanged(const QString newText){
     if(settingupequip) return;
     const QStringList specialCases = { //special cases
-        "One Weapon of Rarity 6 or Lower",
-        "Two Items of Rarity 4 or Lower",
-        "Two Weapons of Rarity 6 or Lower",
-        "One Sword of Rarity 7 or Lower"
+        Dictionary::EquipmentRaritySpecialCases::One_Weapon_of_Rarity_6_or_Lower,
+        Dictionary::EquipmentRaritySpecialCases::Two_Items_of_Rarity_4_or_Lower,
+        Dictionary::EquipmentRaritySpecialCases::Two_Weapons_of_Rarity_6_or_Lower,
+        Dictionary::EquipmentRaritySpecialCases::One_Sword_of_Rarity_7_or_Lower
     };
     ui->equipSpecialWidget->clear();
 
@@ -120,21 +121,21 @@ void NewCharWizardPage2::equipSelectionChanged(const QString newText){
 
 void NewCharWizardPage2::handleSpecCases(QString speccase){
     const QString specCase = speccase;        //get thespecial case value
-    if(specCase == "One Weapon of Rarity 6 or Lower"){
+    if(specCase == Dictionary::EquipmentRaritySpecialCases::One_Weapon_of_Rarity_6_or_Lower){
         ui->equipSpecialWidget->addCBox(dal->qsl_getweaponsunderrarity(6));
     }
-    else if (specCase == "Two Weapons of Rarity 6 or Lower"){
+    else if (specCase == Dictionary::EquipmentRaritySpecialCases::Two_Weapons_of_Rarity_6_or_Lower){
         ui->equipSpecialWidget->addCBox(dal->qsl_getweaponsunderrarity(6));
         ui->equipSpecialWidget->addCBox(dal->qsl_getweaponsunderrarity(6));
 
     }
-    else if (specCase == "Two Items of Rarity 4 or Lower") {
+    else if (specCase == Dictionary::EquipmentRaritySpecialCases::Two_Items_of_Rarity_4_or_Lower) {
         ui->equipSpecialWidget->addCBox(dal->qsl_getitemsunderrarity(4));
         ui->equipSpecialWidget->addCBox(dal->qsl_getitemsunderrarity(4));
 
     }
-    else if (specCase == "One Sword of Rarity 7 or Lower") {
-        ui->equipSpecialWidget->addCBox(dal->qsl_getweapontypeunderrarity(7, "Swords"));
+    else if (specCase == Dictionary::EquipmentRaritySpecialCases::One_Sword_of_Rarity_7_or_Lower) {
+        ui->equipSpecialWidget->addCBox(dal->qsl_getweapontypeunderrarity(7, Dictionary::Weapons::Swords));
 
     }
 }
@@ -156,7 +157,7 @@ bool NewCharWizardPage2::validatePage(){
 
     if(skillSelModel->rowCount() <  dal->i_getschoolskillcount(ui->nc2_school_ComboBox->currentText())){
         QMessageBox msg;
-        msg.setText("Error: insufficient skills selected.");
+        msg.setText("Error: insufficient " + Dictionary::Common::Skills.toLower() + " selected.");
         msg.exec();
         return false;
     }
@@ -173,7 +174,7 @@ void NewCharWizardPage2::on_nc2_unrestrictedSchool_checkBox_toggled(const bool c
 void NewCharWizardPage2::on_nc2_school_ComboBox_currentIndexChanged(const QString &arg1)
 {
     //handle special cases
-    if(arg1 == "Kitsune Impersonator Tradition"){
+    if(arg1 == Dictionary::Schools::KitsuneImpersonatorTradition){
         ui->nc2_kitsune_label->setVisible(true);
         ui->nc2_kitsune_comboBox->setVisible(true);
         ui->nc2_kitsune_comboBox->setCurrentIndex(0);
@@ -191,7 +192,7 @@ void NewCharWizardPage2::on_nc2_school_ComboBox_currentIndexChanged(const QStrin
     //ui->nc2_schooldesc_textEdit->setText(dal->qs_getschooldesc(arg1));
     const int skillcount = dal->i_getschoolskillcount(arg1);
     qDebug()<< skillcount;
-    const QString skilllabel = "Choose " + QString::number(skillcount) + " skills:";
+    const QString skilllabel = "Choose " + QString::number(skillcount) + " " + Dictionary::Common::Skills.toLower() + ":";
     ui->nc2_skill_Label->setText(skilllabel);
     skillOptModel->setStringList(dal->qsl_getschoolskills(arg1)); //set list with school contents
     skillSelModel->setStringList( QStringList{} );  //clear prior selections, since this changed
@@ -205,14 +206,14 @@ void NewCharWizardPage2::on_nc2_school_ComboBox_currentIndexChanged(const QStrin
             QStringList choicesetforcombobox = techsets.at(row);
             choicesetforcombobox.removeFirst();
             qDebug() << "Adding Box: " << choicesetforcombobox ;
-            ui->techWidget->addCBox(choicesetforcombobox, "Choose a technique:");
+            ui->techWidget->addCBox(choicesetforcombobox, "Choose a " + Dictionary::Common::Technique.toLower() + ":");
         }
     }
 
     //EQUIP//
 
     QString schoolname = arg1;
-    if(arg1 == "Kitsune Impersonator Tradition") schoolname = ui->nc2_kitsune_comboBox->currentText();
+    if(arg1 == Dictionary::Schools::KitsuneImpersonatorTradition) schoolname = ui->nc2_kitsune_comboBox->currentText();
     doEquip(schoolname);
 
     //RINGS//
@@ -229,7 +230,7 @@ void NewCharWizardPage2::on_nc2_school_ComboBox_currentIndexChanged(const QStrin
             choicesetforcombobox.append( ring);
         }
         qDebug() << "Adding Box: " << choicesetforcombobox ;
-        ui->ringWidget->addCBox(choicesetforcombobox, "Ring:");
+        ui->ringWidget->addCBox(choicesetforcombobox, Dictionary::Common::Ring + ":");
 
     }
     //this->resize(sizeHint());
@@ -247,10 +248,10 @@ void NewCharWizardPage2::doEquip(const QString school){
     ui->equipSpecialWidget->clear();
     ui->equipWidget->clear();
     const QStringList specialCases = {
-        "One Weapon of Rarity 6 or Lower",
-        "Two Items of Rarity 4 or Lower",
-        "Two Weapons of Rarity 6 or Lower",
-        "One Sword of Rarity 7 or Lower"
+        Dictionary::EquipmentRaritySpecialCases::One_Weapon_of_Rarity_6_or_Lower,
+        Dictionary::EquipmentRaritySpecialCases::Two_Items_of_Rarity_4_or_Lower,
+        Dictionary::EquipmentRaritySpecialCases::Two_Weapons_of_Rarity_6_or_Lower,
+        Dictionary::EquipmentRaritySpecialCases::One_Sword_of_Rarity_7_or_Lower
     };
     const QList<QStringList> equipsets = dal->ql_getlistsofeq(schoolname);              //get a list of equipsets
     if(equipsets.count()>0){                                                //if this returned nothing, time to bail
@@ -262,7 +263,7 @@ void NewCharWizardPage2::doEquip(const QString school){
                     choicesetforcombobox.removeFirst();                     //remove the count at the front
 
                     qDebug() << "Adding Box: " << choicesetforcombobox ;
-                    ui->equipWidget->addCBox(choicesetforcombobox, "Choose an item:");         //add the combobox
+                    ui->equipWidget->addCBox(choicesetforcombobox, "Choose an " + Dictionary::Common::Item.toLower() + ":");         //add the combobox
                 }
             }
             else{                                                           //if it's 1, handle only if it's multiitem
@@ -373,7 +374,7 @@ void NewCharWizardPage2::regenSummary(){
        }
    }
 
-    ui->summary_label->setText("Rings:\n"+rings+"\n\nSkills:\n"+skills);
+    ui->summary_label->setText(Dictionary::Common::Rings + ":\n"+rings+"\n\n" + Dictionary::Common::Skills + ":\n"+skills);
 
 }
 
@@ -432,16 +433,16 @@ QMap<QString, int> NewCharWizardPage2::calcSkills(){
     }
 
     if(    //core
-           heritage == "Wondrous Work" ||
-           heritage ==  "Dynasty Builder" ||
-           heritage ==  "Discovery" ||
-           heritage ==  "Ruthless Victor" ||
-           heritage ==  "Elevated for Service" ||
+           heritage == Dictionary::Heritages::Wondrous_Work ||
+           heritage == Dictionary::Heritages::Dynasty_Builder ||
+           heritage == Dictionary::Heritages::Discovery ||
+           heritage == Dictionary::Heritages::Ruthless_Victor ||
+           heritage == Dictionary::Heritages::Elevated_for_Service ||
            //shadowlands
-           heritage ==   "Infamous Builder" ||
-           heritage ==   "Lost in the Darkness" ||
-           heritage ==   "Vengeance for the Fallen" ||
-           heritage ==   "Tewnty Goblin Thief"
+           heritage == Dictionary::Heritages::Infamous_Builder ||
+           heritage == Dictionary::Heritages::Lost_in_the_Darkness ||
+           heritage == Dictionary::Heritages::Vengeance_for_the_Fallen ||
+           heritage == Dictionary::Heritages::Tewnty_Goblin_Thief
             ){
         skills.append(field("q18OtherEffects").toString());
 

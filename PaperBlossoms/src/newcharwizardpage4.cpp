@@ -23,6 +23,7 @@
 
 #include "newcharwizardpage4.h"
 #include "ui_newcharwizardpage4.h"
+#include "dictionary.h"
 #include "QMessageBox"
 #include <QDebug>
 
@@ -32,7 +33,7 @@ NewCharWizardPage4::NewCharWizardPage4(DataAccessLayer *dal, QWidget *parent) :
 {
     ui->setupUi(this);
     this->dal = dal;
-    this->setTitle("Part 4: Strengths and Weaknesses");
+    this->setTitle("Part 4: " + Dictionary::Common::Strengths + " and " + Dictionary::Common::Weaknesses);
 
     ui->nc4_q9_desc_label->setVisible(false);
     ui->nc4_q10_desc_label->setVisible(false);
@@ -200,16 +201,16 @@ QMap<QString, int> NewCharWizardPage4::calcSkills(){
     }
 
     if(    //core
-           heritage == "Wondrous Work" ||
-           heritage ==  "Dynasty Builder" ||
-           heritage ==  "Discovery" ||
-           heritage ==  "Ruthless Victor" ||
-           heritage ==  "Elevated for Service" ||
+           heritage == Dictionary::Heritages::Wondrous_Work ||
+           heritage == Dictionary::Heritages::Dynasty_Builder ||
+           heritage == Dictionary::Heritages::Discovery ||
+           heritage == Dictionary::Heritages::Ruthless_Victor ||
+           heritage == Dictionary::Heritages::Elevated_for_Service ||
            //shadowlands
-           heritage ==   "Infamous Builder" ||
-           heritage ==   "Lost in the Darkness" ||
-           heritage ==   "Vengeance for the Fallen" ||
-           heritage ==   "Tewnty Goblin Thief"
+           heritage == Dictionary::Heritages::Infamous_Builder ||
+           heritage == Dictionary::Heritages::Lost_in_the_Darkness ||
+           heritage == Dictionary::Heritages::Vengeance_for_the_Fallen ||
+           heritage == Dictionary::Heritages::Tewnty_Goblin_Thief
             ){
         skills.append(field("q18OtherEffects").toString());
 

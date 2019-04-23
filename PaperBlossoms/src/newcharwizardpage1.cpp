@@ -27,6 +27,7 @@
 #include <QVBoxLayout>
 #include <QDebug>
 #include "dataaccesslayer.h"
+#include "dictionary.h"
 
 NewCharWizardPage1::NewCharWizardPage1(DataAccessLayer* dal, QWidget *parent) :
     QWizardPage(parent),
@@ -34,7 +35,7 @@ NewCharWizardPage1::NewCharWizardPage1(DataAccessLayer* dal, QWidget *parent) :
 {
     ui->setupUi(this);
     this->dal = dal;
-    this->setTitle("Part 1: Clan and Family");
+    this->setTitle("Part 1: " + Dictionary::Clan + " and " + Dictionary::Family);
 
     //initialize models
     clanModel = new QStringListModel;
@@ -129,7 +130,7 @@ void NewCharWizardPage1::regenSummary(){
        }
    }
 
-    ui->summary_label->setText("Rings:\n"+rings+"\n\nSkills:\n"+skills);
+    ui->summary_label->setText(Dictionary::Rings + ":\n"+rings+"\n\n" + Dictionary::Skills + ":\n"+skills);
 
 }
 
@@ -188,16 +189,16 @@ QMap<QString, int> NewCharWizardPage1::calcSkills(){
     }
 
     if(    //core
-           heritage == "Wondrous Work" ||
-           heritage ==  "Dynasty Builder" ||
-           heritage ==  "Discovery" ||
-           heritage ==  "Ruthless Victor" ||
-           heritage ==  "Elevated for Service" ||
+           heritage == Dictionary::Heritages::Wondrous_Work ||
+           heritage == Dictionary::Heritages::Dynasty_Builder ||
+           heritage == Dictionary::Heritages::Discovery ||
+           heritage == Dictionary::Heritages::Ruthless_Victor ||
+           heritage == Dictionary::Heritages::Elevated_for_Service ||
            //shadowlands
-           heritage ==   "Infamous Builder" ||
-           heritage ==   "Lost in the Darkness" ||
-           heritage ==   "Vengeance for the Fallen" ||
-           heritage ==   "Tewnty Goblin Thief"
+           heritage == Dictionary::Heritages::Infamous_Builder ||
+           heritage == Dictionary::Heritages::Lost_in_the_Darkness ||
+           heritage == Dictionary::Heritages::Vengeance_for_the_Fallen ||
+           heritage == Dictionary::Heritages::Tewnty_Goblin_Thief
             ){
         skills.append(field("q18OtherEffects").toString());
 

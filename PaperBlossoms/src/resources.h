@@ -21,27 +21,14 @@
  * *******************************************************************
  */
 
-#include "adddisadvdialog.h"
-#include "ui_adddisadvdialog.h"
-#include "resources.h"
+#ifndef RESOURCES_H
+#define RESOURCES_H
 
-AddDisAdvDialog::AddDisAdvDialog(DataAccessLayer* dal, Character* character, QString type,QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::AddDisAdvDialog)
-{
-    ui->setupUi(this);
-    this->setWindowIcon(QIcon(Resources::SakuraIconURL));
-    this->character = character;
-    this->dal = dal;
+#include <QString>
 
-    ui->traitComboBox->addItems(dal->qsl_getadvdisadv(type));
+namespace Resources {
+    static const QString SakuraIconURL = ":/images/resources/pink-sakura-01-hi.png";
+    static const QString SakuraBackgroundURL = ":/images/resources/sakura_PNG37.png";
 }
 
-AddDisAdvDialog::~AddDisAdvDialog()
-{
-    delete ui;
-}
-
-QString AddDisAdvDialog::getResult() const {
-    return ui->traitComboBox->currentText();
-}
+#endif // RESOURCES_H

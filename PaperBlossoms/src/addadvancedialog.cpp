@@ -23,7 +23,9 @@
 
 #include "addadvancedialog.h"
 #include "ui_addadvancedialog.h"
-#include  "dataaccesslayer.h"
+#include "dataaccesslayer.h"
+#include "dictionary.h"
+#include "resources.h"
 #include <QPushButton>
 #include <QSqlRecord>
 #include <QDebug>
@@ -33,7 +35,7 @@ AddAdvanceDialog::AddAdvanceDialog(DataAccessLayer* dal, Character* character,QW
     ui(new Ui::AddAdvanceDialog)
 {
     ui->setupUi(this);
-    this->setWindowIcon(QIcon(":/images/resources/pink-sakura-01-hi.png"));
+    this->setWindowIcon(QIcon(Resources::SakuraIconURL));
     ui->advtype->setCurrentIndex(-1);
     this->dal = dal;
     this->character = character;
@@ -63,7 +65,7 @@ void AddAdvanceDialog::validatePage(){
     bool ok = true;
     ok &= !ui->advtype->currentText().isEmpty();
     ok &= !ui->advchooser_combobox->currentText().isEmpty();
-    if(ui->advtype->currentText() == "Technique"){
+    if(ui->advtype->currentText() == Dictionary::Technique){
         ok &= ui->detailTableView->currentIndex().isValid();
 
         if(ok){
@@ -81,7 +83,7 @@ void AddAdvanceDialog::validatePage(){
                     foreach(const QString cell, advance.split("|")){           // the advance table is pipe separated for now.  FIx later?
                         itemrow << new QStandardItem(cell);              // turn this into qstandarditems to match other paradigms
                     }
-                    if(itemrow.at(0)->text() == "Technique"){            //if it's a tech advance
+                    if(itemrow.at(0)->text() == Dictionary::Technique){            //if it's a tech advance
                         if((itemrow.at(1)->text() == name)){
                             ui->warnlabel->setText("Invalid selection: '"+name+"' is already learned.");
                             ok = false;
@@ -118,7 +120,7 @@ void AddAdvanceDialog::validatePage(){
 
 void AddAdvanceDialog::on_advtype_currentIndexChanged(const QString &arg1)
 {
-    if(arg1 == "Skill"){
+    if(arg1 == Dictionary::Skill){
         ui->advchooser_combobox->clear();
         QStringList skillsopts = dal->qsl_getskills();
         ui->detailTableView->setVisible(false);
@@ -136,7 +138,7 @@ void AddAdvanceDialog::on_advtype_currentIndexChanged(const QString &arg1)
 
 
     }
-    else if (arg1 == "Technique"){
+    else if (arg1 == Dictionary::Technique){
         ui->advchooser_combobox->clear();
 
         //get a list of types that can be chosen at this time
@@ -172,7 +174,7 @@ void AddAdvanceDialog::on_advtype_currentIndexChanged(const QString &arg1)
         ui->detailTableView->resizeColumnsToContents();
         ui->detailTableView->setVisible(true);
     }
-    else if (arg1 == "Ring"){
+    else if (arg1 == Dictionary::Ring){
         ui->advchooser_combobox->clear();
         QStringList rings = (dal->qsl_getrings());
         ui->detailTableView->setVisible(false);
@@ -188,12 +190,12 @@ void AddAdvanceDialog::on_advtype_currentIndexChanged(const QString &arg1)
             if(!ringiterator.key().isEmpty()){
                 int value = ringiterator.value()+character->ringranks[ringiterator.key()];
                 if(value < lowestval) {
-                    if(ringiterator.key() != "Void"){
+                    if(ringiterator.key() != Dictionary::Rings::Void){
                         lowestring = ringiterator.key();
                         lowestval = value;
                     }
                 }
-                if(ringiterator.key() == "Void"){ //void
+                if(ringiterator.key() == Dictionary::Rings::Void){ //void
                     voidring = value;
                 }
             }
@@ -222,13 +224,13 @@ void AddAdvanceDialog::on_advchooser_combobox_currentIndexChanged(const QString 
 
 
 
-    if(ui->advtype->currentText() == "Skill"){
+    if(ui->advtype->currentText() == Dictionary::Skill){
         const int currentrank = character->baseskills[arg1] + character->skillranks[arg1];
         const int cost = (currentrank+1)*2;
         const int rounded = qRound(double(cost)/2.0);
         ui->xp_label->setText(QString::number((ui->halfxp_checkBox->isChecked()?rounded:cost)));
     }
-    if(ui->advtype->currentText() == "Ring"){
+    if(ui->advtype->currentText() == Dictionary::Ring){
         const int currentrank = character->baserings[arg1] + character->ringranks[arg1];
         const int cost = (currentrank+1)*3;
         const int rounded = qRound(double(cost)/2.0);
@@ -251,7 +253,7 @@ void AddAdvanceDialog::on_advchooser_combobox_currentIndexChanged(const QString 
         //}
         //qDebug()<< types;
         proxyModel.setFilterFixedString(arg1);
-        if(arg1 == "Mahō"){
+        if(arg1 == Dictionary::Techniques::Mahō){
             ui->maho_label->setVisible(true);
         }
         else{
@@ -276,7 +278,7 @@ void AddAdvanceDialog::on_title_radioButton_clicked()
 QString AddAdvanceDialog::getResult() const {
     QString row = "";
     row += ui->advtype->currentText() + "|";
-    if(ui->advtype->currentText() == "Technique"){
+    if(ui->advtype->currentText() == Dictionary::Technique){
        const QModelIndex curIndex = proxyModel.mapToSource(ui->detailTableView->currentIndex());
        const QSqlRecord record = techModel.record(curIndex.row());
        row += record.value("name").toString()+"|";
@@ -285,12 +287,12 @@ QString AddAdvanceDialog::getResult() const {
         row += ui->advchooser_combobox->currentText() + "|";
     }
     if(ui->curriculum_radioButton->isChecked())
-        row += "Curriculum|";
+        row += Dictionary::Curriculum + "|";
     else if(ui->free_radioButton->isChecked()){
-        row += ui->reason_lineEdit->text().replace("|","").replace("Title","").replace("Curriculum","")+"|";
+        row += ui->reason_lineEdit->text().replace("|","").replace(Dictionary::Title,"").replace(Dictionary::Curriculum,"")+"|";
     }
     else
-        row += "Title|";
+        row += Dictionary::Title + "|";
     if(ui->free_radioButton->isChecked()){
         row+="0";
     }

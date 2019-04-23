@@ -21,27 +21,19 @@
  * *******************************************************************
  */
 
-#include "adddisadvdialog.h"
-#include "ui_adddisadvdialog.h"
-#include "resources.h"
+#ifndef APPVERSION_H
+#define APPVERSION_H
 
-AddDisAdvDialog::AddDisAdvDialog(DataAccessLayer* dal, Character* character, QString type,QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::AddDisAdvDialog)
-{
-    ui->setupUi(this);
-    this->setWindowIcon(QIcon(Resources::SakuraIconURL));
-    this->character = character;
-    this->dal = dal;
+#include <QString>
 
-    ui->traitComboBox->addItems(dal->qsl_getadvdisadv(type));
+namespace AppVersion{
+    constexpr uint MajorVersion = 1;
+    constexpr uint MinorVersion = 0;
+    constexpr uint PatchVersion = 0;
+
+    static const QString VersionString = QString::asprintf("%i.%i.%i", MajorVersion, MinorVersion, PatchVersion);
+
+    static const QString CompileDateTime = QString(__DATE__) + " " + QString(__TIME__);
 }
 
-AddDisAdvDialog::~AddDisAdvDialog()
-{
-    delete ui;
-}
-
-QString AddDisAdvDialog::getResult() const {
-    return ui->traitComboBox->currentText();
-}
+#endif // APPVERSION_H
